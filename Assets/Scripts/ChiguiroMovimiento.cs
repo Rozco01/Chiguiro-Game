@@ -9,7 +9,7 @@ public class ChiguiroMovimiento : MonoBehaviour
     public bool Saltando;
     private float Ypos;
     private int sky_;
-
+    private float inputMovimiento;
 
 
 
@@ -43,6 +43,9 @@ public class ChiguiroMovimiento : MonoBehaviour
         ProcesarMovimiento();
         ProcesarSaltoDerecha();
         ProcesarSaltoIzquierda();
+        izquierda(inputMovimiento);
+        derecha(inputMovimiento);
+       
     }
 
     bool EstaEnSuelo(){
@@ -55,7 +58,7 @@ public class ChiguiroMovimiento : MonoBehaviour
             saltosRestantes = saltosMax;
             animator.SetBool("sky2", false);
         }
-        if(Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0 && (animator.GetBool("IsRunningLeft") == true || animator.GetBool("IsRunningLeft") == false)){
+        if(Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0 && mirandoDerecha == false){
             animator.SetBool("sky2",true);
             saltosRestantes--;
             rigidbody.velocity = new Vector2(rigidbody.velocity.x,0f);
@@ -75,7 +78,7 @@ public class ChiguiroMovimiento : MonoBehaviour
             saltosRestantes = saltosMax;
             animator.SetBool("sky", false);
         }
-        if(Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0 && (animator.GetBool("IsRunningRight") == true || animator.GetBool("IsRunningRight") == false)){
+        if(Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0 && mirandoDerecha == true){
             animator.SetBool("sky",true); 
             saltosRestantes--;
             rigidbody.velocity = new Vector2(rigidbody.velocity.x,0f);
@@ -90,27 +93,35 @@ public class ChiguiroMovimiento : MonoBehaviour
         Ypos = transform.position.y;
     }
 
-    void Orientacion(){
-        if(Input.GetKey(KeyCode.D)){
-            animator.SetBool("IsRunningRight",true);
+     void Orientacion(float inputMovimiento){
+        if (mirandoDerecha == true && inputMovimiento < 0)
+        {
+            mirandoDerecha = false;
         }
-        else{
-            animator.SetBool("IsRunningRight",false);
+        if (mirandoDerecha == false && inputMovimiento > 0)
+        {
+            mirandoDerecha = true;
         }
     }
     
-
-    void ProcesarMovimiento(){
-        if(Input.GetKey(KeyCode.D)){
-            rigidbody.velocity = new Vector2(maxspeed, rigidbody.velocity.y);
-        }else if(Input.GetKey(KeyCode.A)){
-             rigidbody.velocity = new Vector2(-maxspeed, rigidbody.velocity.y);
-             animator.SetBool("IsRunningLeft", true);
+    void derecha(float inputMovimiento){
+        if(inputMovimiento != 0 && mirandoDerecha == true){  
+                animator.SetBool("IsRunningRight", true);
         }else{
-            rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+                animator.SetBool("IsRunningRight", false);
+        }
+    }
+
+    void izquierda(float inputMovimiento){
+        if(inputMovimiento != 0 && mirandoDerecha == false){  
+            animator.SetBool("IsRunningLeft", true);
+        }else{
             animator.SetBool("IsRunningLeft", false);
         }
-        Orientacion();
-        
+    }
+    void ProcesarMovimiento(){
+        inputMovimiento = Input.GetAxis("Horizontal");
+        rigidbody.velocity = new Vector2(inputMovimiento * maxspeed, rigidbody.velocity.y);
+        Orientacion(inputMovimiento);
     }
 }

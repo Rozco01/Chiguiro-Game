@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - ChiguiroPlayer
+  - Trap
+  - pinchos
   layers:
   - Default
   - TransparentFX

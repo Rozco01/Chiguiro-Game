@@ -1,10 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ChiguiroMovimiento : MonoBehaviour
 {
-
+    //Vida
+    public Image Corazon;
+    public int CantDeCorazon;
+    public RectTransform PosicionPrimerCorazon;
+    public Canvas MyCanvas;
+    public int Offset;
+  
     //Salto regulable
     public bool Saltando;
     private float Ypos;
@@ -23,18 +30,33 @@ public class ChiguiroMovimiento : MonoBehaviour
     private int saltosRestantes;
     private Vector2 moveInput;
     private bool mirandoDerecha = true;
-    private Rigidbody2D rigidbody;
+    private  Rigidbody2D rigidbody;
     private BoxCollider2D boxCollider;
 
     private Animator animator;
 
+
+
+
     // Start is called before the first frame update
     void Start()
     {
+       
+
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
         saltosRestantes = saltosMax;
+
+        Transform PosCorazon = PosicionPrimerCorazon;
+
+        for (int i = 0; i < CantDeCorazon; i++)
+        {
+            Image NewCorazon = Instantiate(Corazon, PosCorazon.position, Quaternion.identity);
+            NewCorazon.transform.parent = MyCanvas.transform;
+            PosCorazon.position = new Vector2(PosCorazon.position.x + Offset, PosCorazon.position.y);
+        }
+
     }
 
     // Update is called once per frame
@@ -45,7 +67,15 @@ public class ChiguiroMovimiento : MonoBehaviour
         ProcesarSaltoIzquierda();
         izquierda(inputMovimiento);
         derecha(inputMovimiento);
-       
+        AtaqueDerecha();
+        AtaqueIzquierda();
+
+        if (CantDeCorazon <= 0)
+        {
+            Destroy(gameObject);
+            Destroy(Corazon);
+        }
+
     }
 
     bool EstaEnSuelo(){
@@ -71,6 +101,31 @@ public class ChiguiroMovimiento : MonoBehaviour
             animator.SetFloat("Gravity", 0);
         }
         Ypos = transform.position.y;
+    }
+
+    public void AtaqueDerecha(){
+        if(mirandoDerecha == true){
+            
+             if (Input.GetMouseButtonDown(0)){
+                Debug.Log("Pressed primary button.");
+                
+                animator.SetBool("IsAttackRight", true);
+                Debug.Log(animator.GetBool("IsAttackRight"));
+             }else{
+                 animator.SetBool("IsAttackRight", false);
+             }
+        }
+    }
+
+    public void AtaqueIzquierda(){
+        if(mirandoDerecha == false){
+             if (Input.GetMouseButtonDown(0)){
+                animator.SetBool("IsAttackLeft", true);
+                Debug.Log(animator.GetBool("IsAttackLeft"));
+             }else{
+                 animator.SetBool("IsAttackLeft", false);
+             }
+        }
     }
 
     public void ProcesarSaltoDerecha(){
@@ -123,5 +178,16 @@ public class ChiguiroMovimiento : MonoBehaviour
         inputMovimiento = Input.GetAxis("Horizontal");
         rigidbody.velocity = new Vector2(inputMovimiento * maxspeed, rigidbody.velocity.y);
         Orientacion(inputMovimiento);
+    }
+
+    //Reconocer hit del la trampa para restar vida
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Trap")
+        {
+            Destroy(MyCanvas.transform.GetChild(CantDeCorazon + 1).gameObject);
+            CantDeCorazon -= 1;
+            
+        }
     }
 }

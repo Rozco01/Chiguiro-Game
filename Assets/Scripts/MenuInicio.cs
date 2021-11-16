@@ -14,6 +14,9 @@ public class MenuInicio : MonoBehaviour
     {
         Button jugarBtn = jugar.GetComponent<Button>();
         jugarBtn.onClick.AddListener(IrJugar); 
+
+        Button salirBtn = salir.GetComponent<Button>();
+        salirBtn.onClick.AddListener(Exit);
     }
 
     // Update is called once per frame
@@ -24,5 +27,9 @@ public class MenuInicio : MonoBehaviour
 
     public void IrJugar(){
         SceneManager.LoadScene("PruebaChiguiro");
+    }
+
+    public void Exit(){
+        Application.Quit();
     }
 }

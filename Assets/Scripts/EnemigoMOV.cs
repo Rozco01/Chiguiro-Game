@@ -33,9 +33,10 @@ public class EnemigoMOV : MonoBehaviour
 
     public void Comportamientos()
     {
-
+        
         if (Mathf.Abs(transform.position.x - target.transform.position.x)> rango_vision && !atacando)
         {
+            ani.SetBool("run", false);
             cronometro += 1 * Time.deltaTime;
             if (cronometro >= 4)
             {
@@ -45,6 +46,9 @@ public class EnemigoMOV : MonoBehaviour
 
             switch (rutina)
             {
+                case 0:
+                    ani.SetBool("walk", false);
+                    break;
                 case 1:
                     direccion = Random.Range(0, 2);
                     rutina++;
@@ -64,6 +68,7 @@ public class EnemigoMOV : MonoBehaviour
                             transform.Translate(Vector3.right * speed_walk * Time.deltaTime);
                             break;
                     }
+                    ani.SetBool("walk", true);
                     break;
             }
         }
@@ -73,13 +78,19 @@ public class EnemigoMOV : MonoBehaviour
             {
                 if(transform.position.x < target.transform.position.x)
                 {
+                    ani.SetBool("walk", false);
+                    ani.SetBool("run", true);
                     transform.Translate(Vector3.right * speed_run *  Time.deltaTime);
                     transform.rotation = Quaternion.Euler(0, 0, 0);
+                    ani.SetBool("attack", false);
                 }
                 else
                 {
+                    ani.SetBool("walk", false);
+                    ani.SetBool("run", true);
                     transform.Translate(Vector3.right * speed_run * Time.deltaTime);
                     transform.rotation = Quaternion.Euler(0, 180, 0);
+                    ani.SetBool("attack", false);
                 }
             }
             else
@@ -94,6 +105,8 @@ public class EnemigoMOV : MonoBehaviour
                     {
                         transform.rotation = Quaternion.Euler(0, 180, 0);
                     }
+                    ani.SetBool("walk", false);
+                    ani.SetBool("run", true);
                 }
             }
 
@@ -103,6 +116,7 @@ public class EnemigoMOV : MonoBehaviour
 
     public void Final_Ani()
     {
+        ani.SetBool("attack", false);
         atacando = false;
         rango.GetComponent<BoxCollider2D>().enabled = true;
     }

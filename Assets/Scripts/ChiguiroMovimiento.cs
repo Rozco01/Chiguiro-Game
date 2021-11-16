@@ -6,8 +6,13 @@ using UnityEngine.UI;
 public class ChiguiroMovimiento : MonoBehaviour
 {
     //Vida
-    public Image Corazon;
-    public int CantDeCorazon;
+    public Image Corazon1;
+    public Image Corazon2;
+    public Image Corazon3;
+    public Image lose;
+   // public Image Corazon;
+    //public int CantDeCorazon;
+    public int vida = 3;
     public RectTransform PosicionPrimerCorazon;
     public Canvas MyCanvas;
     public int Offset;
@@ -33,47 +38,60 @@ public class ChiguiroMovimiento : MonoBehaviour
     private  Rigidbody2D rigidbody;
     private BoxCollider2D boxCollider;
 
-    private Animator animator;
-
-
+    public Animator animator;
 
 
     // Start is called before the first frame update
     void Start()
     {
-       
 
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
         saltosRestantes = saltosMax;
 
-        Transform PosCorazon = PosicionPrimerCorazon;
+        //Transform PosCorazon = PosicionPrimerCorazon;
 
-        for (int i = 0; i < CantDeCorazon; i++)
-        {
-            Image NewCorazon = Instantiate(Corazon, PosCorazon.position, Quaternion.identity);
-            NewCorazon.transform.parent = MyCanvas.transform;
-            PosCorazon.position = new Vector2(PosCorazon.position.x + Offset, PosCorazon.position.y);
-        }
+        //for (int i = 0; i < CantDeCorazon; i++)
+        //{
+        //    Image NewCorazon = Instantiate(Corazon, PosCorazon.position, Quaternion.identity);
+        //    NewCorazon.transform.parent = MyCanvas.transform;
+        //    PosCorazon.position = new Vector2(PosCorazon.position.x + Offset, PosCorazon.position.y);
+        //}
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        ProcesarMovimiento();
+       
+        
+
+             ProcesarMovimiento();
         ProcesarSaltoDerecha();
         ProcesarSaltoIzquierda();
         izquierda(inputMovimiento);
         derecha(inputMovimiento);
         AtaqueDerecha();
         AtaqueIzquierda();
+        
+       
 
-        if (CantDeCorazon <= 0)
+
+        if (vida <= 2)
         {
+            
+            Destroy(Corazon3);
+        } if(vida <= 1)
+        {
+            Destroy(Corazon2);
+        }
+        if (vida <= 0)
+        {
+            
+            Destroy(Corazon1);
             Destroy(gameObject);
-            Destroy(Corazon);
+         
         }
 
     }
@@ -185,9 +203,13 @@ public class ChiguiroMovimiento : MonoBehaviour
     {
         if (collision.gameObject.tag == "Trap")
         {
-            Destroy(MyCanvas.transform.GetChild(CantDeCorazon + 1).gameObject);
-            CantDeCorazon -= 1;
+            print("aychhhhhh" + vida);
+            
+            vida -= 1;
+
             
         }
     }
+
+    
 }

@@ -11,6 +11,9 @@ public class RangoEnemigo2D : MonoBehaviour
     {
      if(coll.CompareTag("ChiguiroPlayer"))
      {
+            ani.SetBool("walk", false);
+            ani.SetBool("run", true);
+            ani.SetBool("attack", true);
             enemigo.atacando = true;
             GetComponent<BoxCollider2D>().enabled = false;
      }
